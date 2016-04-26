@@ -1,6 +1,7 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
+ * Wallpaper App
+ * Author: Daniel Shepard
+ * https://github.com/sheparddw
  */
 
 import React, {
@@ -12,8 +13,7 @@ import React, {
   Dimensions,
   ActivityIndicatorIOS,
   PanResponder,
-  CameraRoll,
-  AlertIOS
+  CameraRoll
 } from 'react-native';
 import Swiper from 'react-native-swiper';
 import NetworkImage from 'react-native-image-progress';
@@ -37,7 +37,8 @@ class SplashWalls extends Component {
     this.state = {
       wallsJSON: [],
       isLoading: true,
-      isHudVisible: false
+      isHudVisible: false,
+      hudMsg: "Saving..."
     };
     this.imagePanResponder = {};
     this.currentWallIndex = 0;
@@ -93,7 +94,6 @@ class SplashWalls extends Component {
     };
   }
   handlePanResponderEnd(e, gestureState) {
-    console.log('Finger pulled up from the image');
   }
 
   onMomentumScrollEnd(e, state, context) {
@@ -106,18 +106,17 @@ class SplashWalls extends Component {
     var {wallsJSON} = this.state;
     var currentWall = wallsJSON[this.currentWallIndex];
     var currentWallURL = 'http://unsplash.it/' + currentWall.width + '/' + currentWall.height + '?image=' + currentWall.id;
-    console.log(currentWallURL);
 
     CameraRoll.saveImageWithTag(currentWallURL).then(data => {
-      this.setState({isHudVisible: false});
-      AlertIOS.alert(
-        'Saved',
-        'Wallpaper successfuly saved to Camera Roll',
-        [
-          {text: 'High 5!', onPress: () => console.log('Ok Pressed!')}
-        ]
-      );
+      //Confirm that the photo was saved
+      this.setState({hudMsg: "Saved to Camera Roll"});
+      //Hide HUD and reset HUD Message
+      setTimeout(() => this.setState({isHudVisible: false, hudMsg: "Saving..."}), 500);
     }).catch(err => {
+      //In case of an error, display it.
+      this.setState({hudMsg: "Error saving to camera roll:" + err});
+      //Give a little time for err to display.
+      setTimeout(() => this.setState({isHudVisible: false, hudMsg: "Saving..."}), 900);
       console.log('Error saving to camera roll', err);
     });
   }
@@ -140,6 +139,7 @@ class SplashWalls extends Component {
     this.setState({
       wallsJSON: [],
       isLoading: true,
+      hudMsg: "Saving...",
       isHudVisible: false
     });
     this.currentWallIndex = 0;
@@ -163,7 +163,7 @@ class SplashWalls extends Component {
   }
 
   renderResults() {
-    var {wallsJSON, isLoading} = this.state;
+    var {wallsJSON, isLoading, isHudVisible, hudMsg} = this.state;
     if(!isLoading){
       return (
         <View>
@@ -171,6 +171,7 @@ class SplashWalls extends Component {
           loop={false}
           onMomentumScrollEnd={this.onMomentumScrollEnd}
           index={this.currentWallIndex}
+          bounces={true}
           >
             {wallsJSON.map((wallpaper, index) => {
               return (
@@ -194,7 +195,7 @@ class SplashWalls extends Component {
               );
             })}
           </Swiper>
-          <ProgressHUD width={width} height={height} isVisible={this.state.isHudVisible}/>
+          <ProgressHUD width={width} height={height} isVisible={isHudVisible} msg={hudMsg}/>
         </View>
       );
     }

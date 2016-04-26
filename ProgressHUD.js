@@ -11,7 +11,7 @@ class ProgressHUD extends Component {
   }
 
   render() {
-    var {width, height, isVisible} = this.props;
+    var {width, height, isVisible, msg} = this.props;
     if(isVisible) {
       return (
         <View
@@ -32,7 +32,7 @@ class ProgressHUD extends Component {
             color={'#fff'}
             size={'large'}
             style={{margin: 15}} />
-          <Text style={{color: '#fff'}}>Please wait...</Text>
+          <Text style={{color: '#fff'}}>{msg}</Text>
         </View>
       );
     } else {
