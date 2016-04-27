@@ -1,2 +1,4 @@
 #Wallpaper App
-This React Native project is based upon a tutorial for building [SplashWalls](https://github.com/nashvail/SplashWalls "SplashWalls").
+This app for iOS gathers random photos to choose wallpapers from.
+This React Native project is based upon [SplashWalls](https://github.com/nashvail/SplashWalls "SplashWalls").
+Several adjustments where made to use ES6 and provide a better UX.
